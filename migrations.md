@@ -172,6 +172,8 @@ $ php artisan make:model Rol -fms
 ...
 ```
 
+> :speech_balloon: **Nota**: IMPORTANTE! Los modelos DEBEN nombrarse en singular, en inglés y en CamelCase.
+
 Estos comandos crean las clases `Usuario`, `Perfil` y `Rol` en el directorio `app/Models`, así como las migraciones en el directorio `database/migrations`. Además, se crean los factories en el directorio `database/factories` y los seeders en el directorio `database/seeders`.
 
 A continuación, analizaremos el código de las migraciones, los modelos, los factories y los seeders que fueron generados.
