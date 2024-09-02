@@ -2,6 +2,7 @@
 
 ## Objetivo
 El objetivo de esta clase es que comprendas los fundamentos de las migraciones en Laravel, sus principales componentes y herramientas, así como aprender a trabajar con modelos y relaciones mediante ejemplos prácticos.
+
 ## Contenido
 1. [Introducción](#introducción)
 2. [Conceptos escenciales](#conceptos-escenciales)
@@ -18,16 +19,7 @@ El objetivo de esta clase es que comprendas los fundamentos de las migraciones e
     - [Código de Migraciones](#código-de-migraciones)
     - [Métodos importantes de `Blueprint` y `Schema`](#métodos-importantes-de-blueprint-y-schema)
     - [Actividad 1. Crear las Migraciones](#actividad-1-crear-las-migraciones)
-4. [Práctica Guiada 2](#práctica-guiada-2-modelos-y-relaciones)
-    - [Sobre los Modelos](#sobre-los-modelos)
-    - [Relaciones](#relaciones)
-        - [Relación Uno a Uno](#relación-uno-a-uno)
-        - [Relación Uno a Muchos](#relación-uno-a-muchos)
-        - [Relación Muchos a Muchos](#relación-muchos-a-muchos)
-        - [Relaciones Polimórficas en Laravel](#relaciones-polimórficas-en-laravel)
-            - [Relación Uno a Muchos (Polimórfica)](#relación-uno-a-muchos-polimórfica)
-            - [Relación Muchos a Muchos (Polimórfica)](#relación-muchos-a-muchos-polimórfica)
-    - [Ejemplos de Migraciones que Modifican Tablas Existentes](#ejemplos-de-migraciones-que-modifican-tablas-existentes)
+4. [Migraciones que Modifican Tablas](#migraciones-que-modifican-tablas)
 
 ## Introducción
 El proyecto que se desarrollará a lo largo de este curso se basa en [Laravel Breeze](https://laravel.com/docs/11.x/starter-kits#laravel-breeze), un paquete oficial de Laravel que facilita la configuración de autenticación básica en proyectos Laravel. Laravel Breeze incluye las rutas, controladores y vistas necesarias para implementar la autenticación, así como la integración con [Tailwind CSS](https://tailwindcss.com/) y [Blade](https://laravel.com/docs/11.x/blade), lo que permite personalizar y adaptar la apariencia de la aplicación.
@@ -81,12 +73,15 @@ Artisan es la interfaz de línea de comandos (CLI) de Laravel, y ofrece una vari
 
 > :speech_balloon: **Nota**: Los comandos `migrate:rollback`, `migrate:reset` y `migrate:refresh` pueden ser peligrosos en producción, ya que pueden eliminar datos importantes. Por lo tanto, es recomendable usarlos con precaución.
 
-## Practica Guiada 1. Migraciones
-En esta práctica, crearemos migraciones y modelos para un sistema de gestión de usuarios, perfiles y roles. Se definirán las relaciones uno a uno, uno a muchos y muchos a muchos entre los modelos `Usuario`, `Perfil` y `Rol`.
+## Práctica Guiada 1. Migraciones
+En esta práctica, crearemos migraciones y modelos para un sistema de gestión de usuarios, perfiles y roles. Se definirán las relaciones uno a uno, uno a muchos y muchos a muchos entre los modelos `Usuario`, `Publicación`, `Perfil` y `Rol`.
+
 ```mermaid
 classDiagram
     direction LR
     class Usuario {
+    }
+    class Publicacion {
     }
     class Perfil {
     }
@@ -94,6 +89,7 @@ classDiagram
     }
     Usuario "1" -- "1" Perfil : tiene
     Usuario "n" -- "n" Rol : cumple
+    Usuario "1" -- "n" Publicacion : publica
 ```
 
 En términos de base de datos, se crearán las siguientes tablas y relaciones:
@@ -125,7 +121,7 @@ erDiagram
 ```
 > :speech_balloon: **Nota**: En este ejemplo, deberá tener en cuenta que laravel para asociar modelos con tablas, aplica por defecto las reglas de plural y singular en inglés. Por ejemplo, el modelo `Usuario` se relaciona con la tabla `usuarios`, el modelo `Rol` se relaciona con la tabla `rols` (no `roles`), mientras que el modelo `Perfil` se asocia con `perfils` (no `perfiles`). Sin embargo, esto puede personalizarse si es necesario.
 ### Los comandos `artisan`
-Comenzamos creando las migraciones para los modelos `Usuario`, `Perfil` y `Rol`. Para ello, tenemos tres opciones:
+Comenzamos creando las migraciones para los modelos `Usuario`, `Perfil` `Publicacion` y `Rol`. Para ello, tenemos tres opciones:
 
 1. Crear las migraciones y los modelos al mismo tiempo.
 2. Crear las migraciones y luego los modelos.
@@ -137,6 +133,7 @@ Para crear las migraciones y los modelos al mismo tiempo, se ejecutan los siguie
 $ php artisan make:model Usuario -m
 $ php artisan make:model Perfil -m
 $ php artisan make:model Rol -m
+$ php artisan make:model Publicacion -m
 ```
 Por otro lado, si se desean crear las migraciones primero y luego los modelos, ejecutamos los siguientes comandos:
 
@@ -144,6 +141,7 @@ Por otro lado, si se desean crear las migraciones primero y luego los modelos, e
 $ php artisan make:migration create_usuarios_table
 $ php artisan make:migration create_perfiles_table
 $ php artisan make:migration create_roles_table
+$ php artisan make:migration create_publicaciones_table
 
 $ php artisan make:model Usuario
 $ php artisan make:model Perfil
@@ -156,6 +154,7 @@ Finalmente, si se desea crear los modelos, las migraciones, los factories y los 
 $ php artisan make:model Usuario -fms
 $ php artisan make:model Perfil -fms
 $ php artisan make:model Rol -fms
+$ php artisan make:model Publicacion -fms
 ```
 
 > :speech_balloon: **Nota**: Para obtener más información sobre los flags, se puede ejecutar el comando `php artisan help make:model`.
@@ -170,11 +169,13 @@ $ php artisan make:model Perfil -fms
 ...
 $ php artisan make:model Rol -fms
 ...
+$ php artisan make:model Publicacion -fms
+
 ```
 
 > :speech_balloon: **Nota**: IMPORTANTE! Los modelos DEBEN nombrarse en singular, en inglés y en CamelCase.
 
-Estos comandos crean las clases `Usuario`, `Perfil` y `Rol` en el directorio `app/Models`, así como las migraciones en el directorio `database/migrations`. Además, se crean los factories en el directorio `database/factories` y los seeders en el directorio `database/seeders`.
+Estos comandos crean las clases `Usuario`, `Publicacion`, `Perfil` y `Rol` en el directorio `app/Models`, así como las migraciones en el directorio `database/migrations`. Además, se crean los factories en el directorio `database/factories` y los seeders en el directorio `database/seeders`.
 
 A continuación, analizaremos el código de las migraciones, los modelos, los factories y los seeders que fueron generados.
 
@@ -247,7 +248,7 @@ Los métodos más relevantes al trabajar con migraciones en Laravel incluyen:
 - `$blueprint->softDeletes()`: Crea el campo `deleted_at` para soft deletes, el cual indica la fecha y hora de eliminación, o `null` si no está eliminado.
 
 #### Actividad 1. Crear las Migraciones
-1. Completa las migraciones para los modelos `Perfil` y `Rol`. Asegúrate de definir los atributos correspondientes. Por ejemplo, en el siguiente código se agregan `apellido`, `nombres` y `email` a la tabla `usuarios`.
+1. Completa las migraciones para los modelos `Perfil`, `Publicacion` y `Rol`. Asegúrate de definir los atributos correspondientes. Por ejemplo, en el siguiente código se agregan `apellido`, `nombres` y `email` a la tabla `usuarios`.
 ```php
 Schema::create('usuarios', function (Blueprint $table) {
     $table->id();
@@ -288,6 +289,7 @@ erDiagram
         deleted_at timestamp "null si no está eliminado"
     }
 ```
+
 ## Práctica Guiada 2. Modelos y Relaciones
 ### Sobre los Modelos
 Los modelos en Laravel se encuentran en el directorio `app/Models` y heredan de la clase `Illuminate\Database\Eloquent\Model`. Éste, haciendo uso de los mecanismos de introspección y de inyección de dependencias de PHP, le permite a Laravel:
@@ -313,7 +315,6 @@ classDiagram
         + email
     }
 ```
-
 
 ### Relaciones
 Con respecto a las relaciones entre modelos, Laravel ofrece una variedad de métodos para definir relaciones entre modelos, como:
@@ -410,16 +411,16 @@ class Perfil extends Model
 
 #### Relación Uno a Muchos
 La única diferencia entre una relación uno a uno y una relación uno a muchos es que en una relación uno a muchos, el modelo principal tiene muchos modelos secundarios. Por ejemplo, un usuario puede tener muchos posts, pero un post solo puede tener un usuario.
-En este caso, se puede definir una relación uno a muchos entre los modelos `Usuario` y `Post`. Para ello, se puede hacer uso del método `hasMany()` en el modelo `Usuario` y del método `belongsTo()` en el modelo `Post`.
+En este caso, se puede definir una relación uno a muchos entre los modelos `Usuario` y `Publicacion`. Para ello, se puede hacer uso del método `hasMany()` en el modelo `Usuario` y del método `belongsTo()` en el modelo `Publicacion`.
 
 **Migraciones:**
 
 ```php
-Schema::create('posts', function (Blueprint $table) {
+Schema::create('publicacions', function (Blueprint $table) {
     $table->id();
     $table->foreignId('user_id')->constrained()->onDelete('cascade');
-    $table->string('title');
-    $table->text('content');
+    $table->string('titulo');
+    $table->text('contenido');
     $table->timestamps();
 });
 ```
@@ -434,7 +435,7 @@ class Usuario extends Model
         return $this->hasOne(Perfil::class);
     }
     {
-        return $this->hasMany(Post::class);
+        return $this->hasMany(Publicacion::class);
     }
 }
 ```
@@ -442,7 +443,7 @@ class Usuario extends Model
 **Modelo Post:**
 
 ```php
-class Post extends Model
+class Publicacion extends Model
 {
     public function usuario() : BelongsTo
     {
@@ -493,87 +494,13 @@ class Role extends Model
     }
 }
 ```
-
-#### **Relaciones Polimórficas en Laravel**
-Las relaciones polimórficas permiten que un modelo se relacione con varios otros modelos mediante una única relación. Este tipo de relaciones es útil cuando se desea que un modelo, como un comentario, etiqueta, o imagen, pueda asociarse a múltiples modelos sin crear relaciones separadas para cada uno.
-
 Existen dos tipos principales de relaciones polimórficas que en las siguientes secciones se describen.
 
-##### **Relación Uno a Muchos (Polimórfica)**
-
-**Migraciones:**
-
-```php
-Schema::create('comments', function (Blueprint $table) {
-    $table->id();
-    $table->text('content');
-    $table->morphs('commentable');
-    $table->timestamps();
-});
-```
-
-**Modelo Comment:**
-
-```php
-class Comment extends Model
-{
-    public function commentable()
-    {
-        return $this->morphTo();
-    }
-}
-```
-
-**Uso del Modelo:**
-
-```php
-$post = Post::find(1);
-$post->comments()->create(['content' => 'Comentario en un post.']);
-```
-
-##### **Relación Muchos a Muchos (Polimórfica)**
-
-**Migraciones:**
-
-```php
-Schema::create('tags', function (Blueprint $table) {
-    $table->id();
-    $table->string('name');
-    $table->timestamps();
-});
-
-Schema::create('taggables', function (Blueprint $table) {
-    $table->id();
-    $table->foreignId('tag_id')->constrained()->onDelete('cascade');
-    $table->morphs('taggable');
-    $table->timestamps();
-});
-```
-
-**Modelo Tag:**
-
-```php
-class Tag extends Model
-{
-    public function posts()
-    {
-        return $this->morphedByMany(Post::class, 'taggable');
-    }
-
-    public function videos()
-    {
-        return $this->morphedByMany(Video::class, 'taggable');
-    }
-}
-```
-
----
-
-### **4. Ejemplos de Migraciones que Modifican Tablas Existentes**
+## Migraciones que Modifican Tablas
 
 Modificar tablas es una tarea común en el desarrollo. Aquí algunos ejemplos:
 
-#### **Agregar Nuevas Columnas**
+### Agregar Nuevas Columnas
 
 ```php
 Schema::table('users', function (Blueprint $table) {
@@ -581,7 +508,7 @@ Schema::table('users', function (Blueprint $table) {
 });
 ```
 
-#### **Eliminar Columnas**
+### Eliminar Columnas
 
 ```php
 Schema::table('users', function (Blueprint $table) {
@@ -589,7 +516,7 @@ Schema::table('users', function (Blueprint $table) {
 });
 ```
 
-#### **Modificar Columnas**
+### Modificar Columnas
 
 ```php
 Schema::table('users', function (Blueprint $table) {
