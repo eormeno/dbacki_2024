@@ -326,7 +326,7 @@ Con respecto a las relaciones entre modelos, Laravel ofrece una variedad de mét
 - `morphMany`,
 - `morphToMany`, entre otros.
 
-#### Relación Uno a Uno
+### Relación Uno a Uno
 En general, las relaciones se definen tanto en las migraciones como en los modelos.
 Para definir una relación uno a uno entre los modelos `Usuario` y `Perfil`, se puede hacer uso del método `hasOne()` en el modelo `Usuario` y del método `belongsTo()` en el modelo `Perfil`.
 Por su parte, en la migración de la tabla `perfils`, se debe agregar una columna `usuario_id` que haga referencia al `id` de la tabla `usuarios`. Para ello, se puede hacer uso del método `foreignId` con el método `constrained` y el método `onDelete('cascade')`.
@@ -342,7 +342,7 @@ classDiagram
         + belongsTo()
     }
 ```
-##### Migraciones
+### Migraciones
 Para agregar la columna, podemos crear una nueva migración o modificar la migración existente de la tabla `perfils`. A continuación, se muestra un ejemplo de cómo agregar la columna `usuario_id` a la tabla `perfils`.
 
 > :speech_balloon: **Nota**: Para agregar una columna a una tabla existente, se debe crear una nueva migración. No se debería modificar la migración original, ya que esto podría causar problemas al trabajar en equipo. Sin embargo, en el contexto de este taller, somos libres de modificar las migraciones existentes y ejecutar `php artisan fresh`.
@@ -389,7 +389,7 @@ También se puede utilizar el método `onUpdate('cascade')` para definir la acci
 
 Por otro lado, se utiliza el método `dropForeign` para eliminar la clave foránea. Recuerda que el método `down` se ejecuta al revertir la migración, y debe deshacer los cambios realizados en el método `up`.
 
-##### Modelos
+### Modelos
 
 ```php
 class Usuario extends Model
@@ -407,6 +407,47 @@ class Perfil extends Model
         return $this->belongsTo(User::class);
     }
 }
+```
+### Actividad 2. Crear las Relaciones
+1. Completa las relaciones uno a uno entre los modelos `Usuario` y `Perfil`.
+2. Ejecuta las migraciones con el comando `php artisan migrate`.
+
+### Ruta console.php
+En el archivo `routes/console.php`, se pueden definir comandos personalizados que se ejecutan desde la consola. Por ejemplo, se pueden definir comandos para crear usuarios con sus perfiles.
+
+```php
+<?php
+use App\Models\Usuario;
+use App\Models\Perfil;
+
+Artisan::command('crear:usuario', function () {
+    $usuario = Usuario::factory()->create();
+    $usuario->perfil()->create([
+        'informacion' => "Información de $usuario->nombres",
+    ]);
+    $this->info('Usuario creado con ID: ' . $usuario->id);
+})->describe('Crea un nuevo usuario y perfil');
+```
+
+Para ejecutar el comando, se utiliza el comando `php artisan crear:usuario`.
+
+También se pueden definir comandos para listar usuarios y perfiles, y para eliminar usuarios y perfiles.
+
+```php
+Artisan::command('listar:usuarios', function () {
+    $usuarios = Usuario::all();
+    $this->table(['ID', 'Apellido', 'Nombres', 'Email'], $usuarios);
+})->describe('Lista todos los usuarios');
+
+Artisan::command('eliminar:usuario {id}', function ($id) {
+    $usuario = Usuario::find($id);
+    if ($usuario) {
+        $usuario->delete();
+        $this->info('Usuario eliminado con ID: ' . $id);
+    } else {
+        $this->error('Usuario no encontrado');
+    }
+})->describe('Elimina un usuario por ID');
 ```
 
 #### Relación Uno a Muchos
