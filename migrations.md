@@ -6,20 +6,10 @@ El objetivo de esta clase es que comprendas los fundamentos de las migraciones e
 ## Contenido
 1. [Introducción](#introducción)
 2. [Conceptos escenciales](#conceptos-escenciales)
-    - [Modelos](#modelos)
-    - [Relaciones](#relaciones)
-    - [Tablas](#tablas)
-    - [Factories](#factories)
-    - [Migraciones](#migraciones)
-    - [Seeders](#seeders)
-    - [Comandos `artisan`](#comandos-artisan)
-3. [Práctica Guidada 1](#practica-guiada-1-migraciones-y-modelos)
-    - [Los comandos `artisan`](#los-comandos-artisan)
-    - [Ejecución](#ejecución)
-    - [Código de Migraciones](#código-de-migraciones)
-    - [Métodos importantes de `Blueprint` y `Schema`](#métodos-importantes-de-blueprint-y-schema)
-    - [Actividad 1. Crear las Migraciones](#actividad-1-crear-las-migraciones)
-4. [Migraciones que Modifican Tablas](#migraciones-que-modifican-tablas)
+3. [Práctica Guiada 1. Migraciones](#práctica-guiada-1-migraciones)
+4. [Práctica Guiada 2. Modelos y Relaciones](#práctica-guiada-2-modelos-y-relaciones)
+5. [Práctica Guiada 3. Seeders y Comandos Personalizados](#práctica-guiada-3-seeders-y-comandos-personalizados)
+6. [Práctica Guiada 4. Listar y Eliminar Usuarios](#práctica-guiada-4-listar-y-eliminar-usuarios)
 
 ## Introducción
 El proyecto que se desarrollará a lo largo de este curso se basa en [Laravel Breeze](https://laravel.com/docs/11.x/starter-kits#laravel-breeze), un paquete oficial de Laravel que facilita la configuración de autenticación básica en proyectos Laravel. Laravel Breeze incluye las rutas, controladores y vistas necesarias para implementar la autenticación, así como la integración con [Tailwind CSS](https://tailwindcss.com/) y [Blade](https://laravel.com/docs/11.x/blade), lo que permite personalizar y adaptar la apariencia de la aplicación.
@@ -412,33 +402,71 @@ class Perfil extends Model
 1. Completa las relaciones uno a uno entre los modelos `Usuario` y `Perfil`.
 2. Ejecuta las migraciones con el comando `php artisan migrate`.
 
+## Práctica Guiada 3. Seeders y Comandos Personalizados
 ### Ruta console.php
 En el archivo `routes/console.php`, se pueden definir comandos personalizados que se ejecutan desde la consola. Por ejemplo, se pueden definir comandos para crear usuarios con sus perfiles.
+
+Para ello, se puede utilizar el método `Artisan::command(nombre, función)` para definir un comando personalizado. Por ejemplo, se puede definir un comando para crear un usuario con su perfil.
 
 ```php
 <?php
 use App\Models\Usuario;
 use App\Models\Perfil;
 
-Artisan::command('crear:usuario', function () {
+Artisan::command('usuario:crear', function () {
     $usuario = Usuario::factory()->create();
     $usuario->perfil()->create([
         'informacion' => "Información de $usuario->nombres",
     ]);
-    $this->info('Usuario creado con ID: ' . $usuario->id);
+    $this->info("Usuario creado: $usuario->apellidos ($usuario->id)");
 })->describe('Crea un nuevo usuario y perfil');
 ```
+> :speech_balloon: **Nota**: En este ejemplo, se utiliza el método `factory()` para crear un usuario con datos aleatorios. Luego, se crea un perfil para el usuario con información personalizada. Finalmente, se muestra un mensaje con el apellido y el ID del usuario creado.
 
-Para ejecutar el comando, se utiliza el comando `php artisan crear:usuario`.
+> :speech_balloon: **Nota**: Para ordenarnos con los nombres de los comandos, se recomienda utilizar el formato `nombre:acción`. Por ejemplo, `usuario:crear`, `usuario:eliminar`, `usuario:listar`.
 
-También se pueden definir comandos para listar usuarios y perfiles, y para eliminar usuarios y perfiles.
+Para ejecutar el comando, se utiliza el comando `php artisan usuario:crear`.
+
+### Actividad 3. Crear un Comando Personalizado
+1. Escribe el comando anterior en el archivo `routes/console.php`.
+2. Ejecuta el comando `php artisan usuario:crear`.
+3. Verifica que se haya creado un usuario con su perfil en la base de datos.
+
+## Práctica Guiada 4. Listar Usuarios
+También se pueden definir comandos para listar usuarios y perfiles.
+
+### Listar Usuarios
+#### Método `all()`
+Para listar usuarios, se puede definir un comando que obtenga todos los usuarios y muestre sus datos en una tabla. Eloquent proporciona el método `all()` para obtener todos los registros de una tabla. Este método devuelve una colección de modelos que se pueden mostrar en una tabla.
+
+#### Método `table()`
+Este método puede recibir un array con los nombres de las columnas que se desean mostrar en la tabla.
+Por su parte, el método `table()` de Artisan permite mostrar datos en una tabla en la consola.
 
 ```php
-Artisan::command('listar:usuarios', function () {
+Artisan::command('usuario:listar', function () {
     $usuarios = Usuario::all();
+    // $usuarios = Usuario::all(['id', 'apellido', 'nombres', 'email']);
     $this->table(['ID', 'Apellido', 'Nombres', 'Email'], $usuarios);
 })->describe('Lista todos los usuarios');
+```
 
+#### Actividad 4. Listar Usuarios
+1. Escribe el comando anterior en el archivo `routes/console.php`.
+2. Ejecuta el comando `php artisan usuario:listar`.
+
+## Práctica Guiada 5. Eliminar Usuarios
+Para eliminar usuarios, se requieren dos pasos:
+1. Buscar el usuario por su ID.
+2. Eliminar el usuario si se encuentra.
+#### Método `find()`
+Se puede utilizar el método `find()` de Eloquent para buscar un usuario por su ID. Si el usuario se encuentra, se puede eliminar utilizando el método `delete()`. Por el contrario, si el usuario no se encuentra, el valor devuelto será `null`.
+#### Método `delete()`
+Este método elimina el modelo de la base de datos. Si el modelo se elimina correctamente, el método devuelve `true`. De lo contrario, devuelve `false`.
+#### Parámetros en comandos de Artisan
+Los comandos de Artisan pueden recibir parámetros y opciones. Los parámetros se definen entre llaves `{}` y las opciones se definen con el prefijo `--`. Por ejemplo, en el comando `php artisan eliminar:usuario {id}`, `id` es un parámetro, mientras que en el comando `php artisan usuario:listar --id=1`, `id` es una opción.
+
+```php
 Artisan::command('eliminar:usuario {id}', function ($id) {
     $usuario = Usuario::find($id);
     if ($usuario) {
@@ -449,6 +477,10 @@ Artisan::command('eliminar:usuario {id}', function ($id) {
     }
 })->describe('Elimina un usuario por ID');
 ```
+
+#### Actividad 5. Eliminar Usuarios
+1. Escribe el comando anterior en el archivo `routes/console.php`.
+2. Ejecuta el comando `php artisan eliminar:usuario {id}` con un ID válido.
 
 #### Relación Uno a Muchos
 La única diferencia entre una relación uno a uno y una relación uno a muchos es que en una relación uno a muchos, el modelo principal tiene muchos modelos secundarios. Por ejemplo, un usuario puede tener muchos posts, pero un post solo puede tener un usuario.
