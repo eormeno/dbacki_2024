@@ -9,7 +9,9 @@ El objetivo de esta clase es que comprendas los fundamentos de las migraciones e
 3. [Práctica Guiada 1. Migraciones](#práctica-guiada-1-migraciones)
 4. [Práctica Guiada 2. Modelos y Relaciones](#práctica-guiada-2-modelos-y-relaciones)
 5. [Práctica Guiada 3. Seeders y Comandos Personalizados](#práctica-guiada-3-seeders-y-comandos-personalizados)
-6. [Práctica Guiada 4. Listar y Eliminar Usuarios](#práctica-guiada-4-listar-y-eliminar-usuarios)
+6. [Práctica Guiada 4. Listar Usuarios](#práctica-guiada-4-listar-usuarios)
+7. [Práctica Guiada 5. Eliminar Usuarios](#práctica-guiada-5-eliminar-usuarios)
+
 
 ## Introducción
 El proyecto que se desarrollará a lo largo de este curso se basa en [Laravel Breeze](https://laravel.com/docs/11.x/starter-kits#laravel-breeze), un paquete oficial de Laravel que facilita la configuración de autenticación básica en proyectos Laravel. Laravel Breeze incluye las rutas, controladores y vistas necesarias para implementar la autenticación, así como la integración con [Tailwind CSS](https://tailwindcss.com/) y [Blade](https://laravel.com/docs/11.x/blade), lo que permite personalizar y adaptar la apariencia de la aplicación.
