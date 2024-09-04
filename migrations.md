@@ -11,6 +11,7 @@ El objetivo de esta clase es que comprendas los fundamentos de las migraciones e
 5. [Taller 3. Seeders y Comandos Personalizados](#taller-3-seeders-y-comandos-personalizados)
 6. [Taller 4. Listar Usuarios](#taller-4-listar-usuarios)
 7. [Taller 5. Eliminar Usuarios](#taller-5-eliminar-usuarios)
+8. [Taller 6. Relación Uno a Muchos](#taller-6-relación-uno-a-muchos)
 
 
 ## Introducción
@@ -66,7 +67,7 @@ Artisan es la interfaz de línea de comandos (CLI) de Laravel, y ofrece una vari
 > :speech_balloon: **Nota**: Los comandos `migrate:rollback`, `migrate:reset` y `migrate:refresh` pueden ser peligrosos en producción, ya que pueden eliminar datos importantes. Por lo tanto, es recomendable usarlos con precaución.
 
 ## Taller 1. Migraciones
-En esta práctica, crearemos migraciones y modelos para un sistema de gestión de usuarios, perfiles y roles. Se definirán las relaciones uno a uno, uno a muchos y muchos a muchos entre los modelos `Usuario`, `Publicación`, `Perfil` y `Rol`.
+En esta práctica, crearemos migraciones y modelos para un sistema de gestión de usuarios, perfiles y actividades. Se definirán las relaciones uno a uno, uno a muchos y muchos a muchos entre los modelos `Usuario`, `Publicación`, `Perfil` y `Actividad`.
 
 ```mermaid
 classDiagram
@@ -77,43 +78,52 @@ classDiagram
     }
     class Perfil {
     }
-    class Rol {
+    class Actividad {
     }
     Usuario "1" -- "1" Perfil : tiene
-    Usuario "n" -- "n" Rol : cumple
     Usuario "1" -- "n" Publicacion : publica
+    Usuario "n" -- "n" Actividad : realiza
 ```
 
 En términos de base de datos, se crearán las siguientes tablas y relaciones:
 ```mermaid
 erDiagram
     usuarios ||--|| perfils : tiene
-    usuarios ||--|{ rols_usuarios : cumple
-    rols_usuarios }|--|| rols : cumple
+    usuarios ||--|{ publicacions : publica
+    usuarios ||--|{ actividads_usuarios : realiza
+    actividads_usuarios }|--|| actividads : realiza
     usuarios {
         id int PK
         apellido VARCHAR
         nombres VARCHAR
         email VARCHAR
     }
+    publicacions {
+        id int PK
+        usuario_id int FK
+        titulo VARCHAR
+        contenido TEXT
+    }
     perfils {
         id int PK
         usuario_id int FK
         informacion json
     }
-    rols {
+    actividads {
         id int PK
         nombre VARCHAR
     }
-    rols_usuarios {
+    actividads_usuarios {
         id int PK
         usuario_id int FK
-        rol_id int FK
+        actividad_id int FK
+        fecha date
+        resultado VARCHAR
     }
 ```
-> :speech_balloon: **Nota**: En este ejemplo, deberá tener en cuenta que laravel para asociar modelos con tablas, aplica por defecto las reglas de plural y singular en inglés. Por ejemplo, el modelo `Usuario` se relaciona con la tabla `usuarios`, el modelo `Rol` se relaciona con la tabla `rols` (no `roles`), mientras que el modelo `Perfil` se asocia con `perfils` (no `perfiles`). Sin embargo, esto puede personalizarse si es necesario.
+> :speech_balloon: **Nota**: En este ejemplo, deberá tener en cuenta que para asociar modelos con tablas, Laravel aplica por defecto las reglas de plural y singular en inglés. Por ejemplo, el modelo `Usuario` se relaciona con la tabla `usuarios`, el modelo `Actividad` se relaciona con la tabla `actividads` (no `actividades`), el modelo `Perfil` se asocia con `perfils` (no `perfiles`) y el modelo `Publicacion` con `publicacions`. Sin embargo, esto puede personalizarse si es necesario.
 ### Los comandos `artisan`
-Comenzamos creando las migraciones para los modelos `Usuario`, `Perfil` `Publicacion` y `Rol`. Para ello, tenemos tres opciones:
+Comenzamos creando las migraciones para los modelos `Usuario`, `Perfil` `Publicacion` y `Actividad`. Para ello, tenemos tres opciones:
 
 1. Crear las migraciones y los modelos al mismo tiempo.
 2. Crear las migraciones y luego los modelos.
@@ -124,7 +134,7 @@ Para crear las migraciones y los modelos al mismo tiempo, se ejecutan los siguie
 ```bash
 $ php artisan make:model Usuario -m
 $ php artisan make:model Perfil -m
-$ php artisan make:model Rol -m
+$ php artisan make:model Actividad -m
 $ php artisan make:model Publicacion -m
 ```
 Por otro lado, si se desean crear las migraciones primero y luego los modelos, ejecutamos los siguientes comandos:
@@ -132,12 +142,13 @@ Por otro lado, si se desean crear las migraciones primero y luego los modelos, e
 ```bash
 $ php artisan make:migration create_usuarios_table
 $ php artisan make:migration create_perfiles_table
-$ php artisan make:migration create_roles_table
-$ php artisan make:migration create_publicaciones_table
+$ php artisan make:migration create_actividads_table
+$ php artisan make:migration create_publicacions_table
 
 $ php artisan make:model Usuario
 $ php artisan make:model Perfil
-$ php artisan make:model Rol
+$ php artisan make:model Actividad
+$ php artisan make:model Publicacion
 ```
 
 Finalmente, si se desea crear los modelos, las migraciones, los factories y los seeders, se ejecutan los siguientes comandos:
@@ -145,11 +156,11 @@ Finalmente, si se desea crear los modelos, las migraciones, los factories y los 
 ```bash
 $ php artisan make:model Usuario -fms
 $ php artisan make:model Perfil -fms
-$ php artisan make:model Rol -fms
+$ php artisan make:model Actividad -fms
 $ php artisan make:model Publicacion -fms
 ```
 
-> :speech_balloon: **Nota**: Para obtener más información sobre los flags, se puede ejecutar el comando `php artisan help make:model`.
+> :speech_balloon: **Nota**: Para obtener más información sobre los flags, puedes ejecutar el comando `php artisan help make:model`.
 
 ### Ejecución
 Optamos por la última opción, y creamos los modelos, las migraciones, los factories y los seeders para los modelos `Usuario`, `Perfil` y `Rol`. A continuación, se presentan los comandos ejecutados:
@@ -159,15 +170,15 @@ $ php artisan make:model Usuario -fms
 ...
 $ php artisan make:model Perfil -fms
 ...
-$ php artisan make:model Rol -fms
+$ php artisan make:model Actividad -fms
 ...
 $ php artisan make:model Publicacion -fms
 
 ```
 
-> :speech_balloon: **Nota**: IMPORTANTE! Los modelos DEBEN nombrarse en singular, en inglés y en CamelCase.
+> :speech_balloon: **Nota**: **¡IMPORTANTE!** Los modelos DEBEN nombrarse en singular, en inglés y en CamelCase.
 
-Estos comandos crean las clases `Usuario`, `Publicacion`, `Perfil` y `Rol` en el directorio `app/Models`, así como las migraciones en el directorio `database/migrations`. Además, se crean los factories en el directorio `database/factories` y los seeders en el directorio `database/seeders`.
+Estos comandos crean las clases `Usuario`, `Publicacion`, `Perfil` y `Actividad` en el directorio `app/Models`, así como las migraciones en el directorio `database/migrations`. Además, se crean los factories en el directorio `database/factories` y los seeders en el directorio `database/seeders`.
 
 A continuación, analizaremos el código de las migraciones, los modelos, los factories y los seeders que fueron generados.
 
@@ -410,41 +421,117 @@ En el archivo `routes/console.php`, se pueden definir comandos personalizados qu
 
 Para ello, se puede utilizar el método `Artisan::command(nombre, función)` para definir un comando personalizado. Por ejemplo, se puede definir un comando para crear un usuario con su perfil.
 
+### Factory de Usuario
+Para crear un usuario con datos aleatorios, se puede utilizar un factory. Laravel proporciona un método `factory()` que permite crear registros con datos aleatorios. Por ejemplo, se puede utilizar el factory `Usuario::factory()->create()` para crear un usuario con datos aleatorios.
+Cuando creamos el modelo con la migración, utilizamos los parámetros -fms para crear el factory y el seeder. El factory se encuentra en el directorio `database/factories` y se puede personalizar para generar datos específicos.
+
+```php
+<?php
+namespace Database\Factories;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+class UsuarioFactory extends Factory {
+    public function definition(): array {
+        return [
+            'nombres' => $this->faker->firstName,
+            'apellido' => $this->faker->lastName,
+            'email' => $this->faker->unique()->safeEmail
+        ];
+    }
+}
+```
+En este ejemplo, se define un factory para el modelo `Usuario` con los campos `nombres`, `apellido` y `email`. Se utilizan los métodos `firstName`, `lastName` y `unique()->safeEmail` para generar datos aleatorios.
+### El atributo `fillable`
+Para proteger los campos de un modelo, se puede utilizar el atributo `fillable` para especificar los campos que se pueden asignar masivamente. Por ejemplo, en el modelo `Usuario`, se puede definir el atributo `fillable` para proteger los campos `id`, `nombres`, `apellido` y `email`.
+Así, debemos modificar el modelo `Usuario`, agregando el atributo `fillable` con los campos protegidos.
+
+```php
+class Usuario extends Model
+{
+    protected $fillable = ['nombres', 'apellido', 'email'];
+    ...
+}
+```
+
 ```php
 <?php
 use App\Models\Usuario;
-use App\Models\Perfil;
 
 Artisan::command('usuario:crear', function () {
     $usuario = Usuario::factory()->create();
-    $usuario->perfil()->create([
-        'informacion' => "Información de $usuario->nombres",
-    ]);
-    $this->info("Usuario creado: $usuario->apellidos ($usuario->id)");
+    $this->info("Usuario creado: $usuario->apellido ($usuario->id)");
 })->describe('Crea un nuevo usuario y perfil');
 ```
-> :speech_balloon: **Nota**: En este ejemplo, se utiliza el método `factory()` para crear un usuario con datos aleatorios. Luego, se crea un perfil para el usuario con información personalizada. Finalmente, se muestra un mensaje con el apellido y el ID del usuario creado.
+
+Ahora, al ejecutar el comando `php artisan usuario:crear`, se creará un usuario con datos aleatorios y se mostrará un mensaje con el apellido y el ID del usuario creado.
 
 > :speech_balloon: **Nota**: Para ordenarnos con los nombres de los comandos, se recomienda utilizar el formato `nombre:acción`. Por ejemplo, `usuario:crear`, `usuario:eliminar`, `usuario:listar`.
-
-Para ejecutar el comando, se utiliza el comando `php artisan usuario:crear`.
 
 ### Actividad 3. Crear un Comando Personalizado
 1. Escribe el comando anterior en el archivo `routes/console.php`.
 2. Ejecuta el comando `php artisan usuario:crear`.
 3. Verifica que se haya creado un usuario con su perfil en la base de datos.
 
-## Taller 4. Listar Usuarios
+## Taller 4. Relación Uno a Uno entre Usuario y Perfil
+Para establecer una relación uno a uno, en la migración se debe agregar la clave foránea `usuario_id` a la tabla `perfils`. Para ello, se puede utilizar el método `foreignId()` con el método `constrained()` y el método `onDelete('cascade')`.
+```php
+Schema::create('perfils', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('usuario_id')->constrained()->onDelete('cascade');
+    $table->json('informacion');
+    $table->timestamps();
+});
+```
+Continuando con el ejemplo anterior, se puede definir una relación uno a uno entre los modelos `Usuario` y `Perfil`. Para ello, se puede utilizar el método `hasOne()` en el modelo `Usuario` y el método `belongsTo()` en el modelo `Perfil`.
+Ejecutamos los siguientes pasos:
+1. En el modelo `Usuario`, se puede definir un método `perfil()` que devuelva la relación `hasOne` con el modelo `Perfil`.
+```php
+class Usuario extends Model
+{
+    public function perfil()
+    {
+        return $this->hasOne(Perfil::class);
+    }
+}
+```
+2. En el modelo `Perfil`, se definimos el método `usuario()` que devuelva la relación `belongsTo` con el modelo `Usuario`. En el mismo, agregamos el fillable para proteger el campo `informacion`.
+```php
+class Perfil extends Model
+{
+    protected $fillable = ['informacion'];
+    public function usuario()
+    {
+        return $this->belongsTo(Usuario::class);
+    }
+}
+```
+
+3. El factory de perfil se puede personalizar para generar datos específicos. Por ejemplo, se puede utilizar el método `sentence()` para generar una oración aleatoria.
+```php
+<?php
+namespace Database\Factories;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+class PerfilFactory extends Factory {
+    public function definition(): array {
+        return [
+            'informacion' => $this->faker->sentence
+        ];
+    }
+}
+```
+4. Modificamos el comando personalizado para crear un usuario con su perfil. En el comando, se puede utilizar el factory `Usuario::factory()->create()` para crear un usuario con datos aleatorios y el factory `Perfil::factory()->create()` para crear un perfil con datos aleatorios.
+
+## Taller 5. Listar Usuarios
 También se pueden definir comandos para listar usuarios y perfiles.
 
-### Listar Usuarios
-#### Método `Model::all()`
+### Método `Model::all()`
 Para listar usuarios, se puede definir un comando que obtenga todos los usuarios y muestre sus datos en una tabla. Eloquent proporciona el método `all()` para obtener todos los registros de una tabla. Este método devuelve una colección de modelos que se pueden mostrar en una tabla.
 
-#### Método `Model::with()`
+### Método `Model::with()`
 Para cargar relaciones, se puede utilizar el método `with()` de Eloquent. Por ejemplo, para cargar la relación `perfil` de los usuarios, se puede utilizar el método `with('perfil')`.
 
-#### Método `Artisan::table()`
+### Método `Artisan::table()`
 Este método puede recibir un array con los nombres de las columnas que se desean mostrar en la tabla.
 Por su parte, el método `table()` de Artisan permite mostrar datos en una tabla en la consola.
 
@@ -456,7 +543,7 @@ Artisan::command('usuario:listar', function () {
 })->describe('Lista todos los usuarios');
 ```
 
-#### Actividad 4. Listar Usuarios
+### Actividad 4. Listar Usuarios
 1. Escribe el comando anterior en el archivo `routes/console.php`.
 2. Ejecuta el comando `php artisan usuario:listar`.
 3. Agrega a la tabla, la información de los perfiles de los usuarios. Para ello, puedes utilizar el método `with()` de Eloquent para cargar la relación `perfil` de los usuarios. Además, puedes limitar la cantidad de caracteres del campo perfil para que se muestre en la tabla y agregar `...` al final del texto si es necesario.
@@ -491,11 +578,9 @@ Artisan::command('usuario:eliminar {id}', function ($id) {
 4. Ejecuta el comando `php artisan eliminar:usuario {id}` con un ID inválido.
 5. En el comando verifica que el parámtero `id` es un número entero y no nulo. En caso contrario, muestra un mensaje de error.
 
-#### Relación Uno a Muchos
-La única diferencia entre una relación uno a uno y una relación uno a muchos es que en una relación uno a muchos, el modelo principal tiene muchos modelos secundarios. Por ejemplo, un usuario puede tener muchos posts, pero un post solo puede tener un usuario.
+## Taller 6. Relación Uno a Muchos
+La única diferencia entre una relación uno a uno y una relación uno a muchos es que en ésta, el modelo principal tiene muchos modelos secundarios. Por ejemplo, un usuario puede tener muchas publicaciones, pero una publicación solo puede tener un usuario.
 En este caso, se puede definir una relación uno a muchos entre los modelos `Usuario` y `Publicacion`. Para ello, se puede hacer uso del método `hasMany()` en el modelo `Usuario` y del método `belongsTo()` en el modelo `Publicacion`.
-
-**Migraciones:**
 
 ```php
 Schema::create('publicacions', function (Blueprint $table) {
@@ -506,8 +591,6 @@ Schema::create('publicacions', function (Blueprint $table) {
     $table->timestamps();
 });
 ```
-
-**Modelo User:**
 
 ```php
 class Usuario extends Model
@@ -521,8 +604,6 @@ class Usuario extends Model
     }
 }
 ```
-
-**Modelo Post:**
 
 ```php
 class Publicacion extends Model
