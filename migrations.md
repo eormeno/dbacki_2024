@@ -450,59 +450,82 @@ Este método puede recibir un array con los nombres de las columnas que se desea
 // sintaxis de Artisan::table()
 Artisan::table($headers, $data);
 ```
-#### Filtrar columnas con `map()`, `pluck()` y `only()`
-En muchos casos, no se desean mostrar todas las columnas de un modelo en la tabla. Para filtrar las columnas, se pueden utilizar los métodos `map()`, `pluck()` y `only()`. A continuación, se describen las diferencias entre estos métodos.
+#### Seleccionar columnas con `map()`, `pluck()` y `only()`
+Dado que n muchos casos no queremos mostrar todas las columnas podemos utilizar los métodos `map()`, `pluck()` y `only()`. A continuación mostramos las diferencias entre estos métodos.
 ##### Método `map( función )`
 El método `map` itera a través de la colección y te permite modificar cada elemento, devolviendo una nueva colección con los elementos modificados.
-Ejemplo:
 ```php
 $usuarios = Usuario::all();
 $nombresUsuarios = $usuarios->map(function ($usuario) {
-    return $usuario->nombre;
+    return [
+        'id' => $usuario->id,
+        'apellidos' => $usuario->apellidos,
+        'nombres' => $usuario->nombres,
+    ];
 });
 ```
-En este ejemplo, estamos creando una nueva colección que contiene solo los nombres de todos los usuarios.
-
+En este ejemplo, estamos creando una nueva colección que contiene id, apellidos y nombres de los usuarios. La variable `$nombresUsuarios` contendrá un arreglo con la siguiente estructura:
+```php
+[
+    ['id' => 1, 'apellidos' => 'Pérez', 'nombres' => 'Juan'],
+    ['id' => 2, 'apellidos' => 'Gómez', 'nombres' => 'María'],
+    ...
+]
+```
 ##### Método `pluck( valor, clave )`
 El método `pluck` recupera todos los valores de una clave determinada de la colección. Es un atajo conveniente para mapear una sola columna o clave.
 
-Ejemplo:
 ```php
 $usuarios = Usuario::all();
 $nombresUsuarios = $usuarios->pluck('nombres','id');
 ```
-Esto te dará una colección de todas las direcciones de correo electrónico de los usuarios.
-
-##### Método `only( claves )`
-El método `only` devuelve una nueva colección con solo las claves especificadas de la colección original.
-
-Ejemplo:
+Esto te retornará una colección con nombres e identificadores de los usuarios. En este caso, la variable `$nombresUsuarios` contendrá un arreglo con la siguiente estructura:
 ```php
-$usuario = Usuario::first();
-$nombreYCorreo = $usuario->only(['nombre', 'email']);
+[
+    1 => 'Juan',
+    2 => 'María',
+    ...
+]
 ```
-
-Esto devolverá una colección con solo los atributos 'nombre' y 'email' del usuario.
-
-Similitudes:
-1. Los tres métodos devuelven una nueva colección.
-2. Todos pueden ser usados para transformación o filtrado de datos.
-
-Diferencias:
-1. `map()` es el más flexible, permitiéndote realizar transformaciones complejas en cada elemento.
-2. `pluck()` es específicamente para extraer una sola columna o clave de cada elemento.
-3. `only()` se usa para filtrar las claves no deseadas de la colección, manteniendo solo las especificadas.
+ - Similitudes:
+    1. Los dos métodos devuelven una nueva colección.
+    2. Todos pueden ser usados para transformación o filtrado de datos.
+ - Diferencias:
+    1. `map()` es el más flexible, permitiéndote realizar transformaciones complejas en cada elemento.
+    2. `pluck()` es específicamente para extraer una sola columna o clave de cada elemento.
 
 ```php
-Artisan::command('usuario:listar-todo', function () {
-    $usuarios = Usuario::get()->map(function ($usuario) {
-        return $usuario->only(['id', 'apellido', 'nombres', 'email']);
+Artisan::command('usuario:listar-solo', function () {
+    $this->info('Usando map()');
+    $usuarios = Usuario::all()->map(function ($usuario) {
+        return [
+            'id' => $usuario->id,
+            'apellidos' => $usuario->apellidos,
+            'nombres' => $usuario->nombres,
+        ];
     });
-    // $usuarios = Usuario::all(['id', 'apellido', 'nombres', 'email']);
-    $this->table(['ID', 'Apellido', 'Nombres', 'Email'], $usuarios);
-})->describe('Lista todos los usuarios');
+    $this->line(json_encode($usuarios, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+    $this->info('Usando pluck()');
+    $usuarios = Usuario::all()->pluck('apellidos', 'id');
+    $this->line(json_encode($usuarios, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+})->describe('Lista los usuarios que no tienen perfil');
 ```
 
+#### Seleccionar filas con `where()`, `orWhere()` y `like`
+El método `where()` permite filtrar los registros de una tabla en función de una condición. Por ejemplo, para listar los usuarios cuyo apellido, nombre o email contenga una cadena específica, se puede utilizar el método `where()`, seguido de `like` y `%cadena%`.
+
+```php
+$search = 'per'; // cadena a buscar
+$usuarios = Usuario::where('apellidos', 'like', "%$search%")
+    ->orWhere('nombres', 'like', "%$search%")
+    ->get()->map(function ($usuario) {
+        return [
+            'id' => $usuario->id,
+            'apellidos' => $usuario->apellidos,
+            'nombres' => $usuario->nombres,
+        ];
+    });
+```
 #### Actividad 4. Listar Usuarios
 1. Escribe el comando anterior en el archivo `routes/console.php`.
 2. Ejecuta el comando `php artisan usuario:listar`.
