@@ -89,6 +89,7 @@ En términos de base de datos, se crearán las siguientes tablas y relaciones:
 erDiagram
     usuarios ||--|| perfils : tiene
     usuarios ||--|{ rols_usuarios : cumple
+    usuarios ||--|{ publicacions : publica
     rols_usuarios }|--|| rols : cumple
     usuarios {
         id int PK
@@ -109,6 +110,12 @@ erDiagram
         id int PK
         usuario_id int FK
         rol_id int FK
+    }
+    publicacions {
+        id int PK
+        usuario_id int FK
+        titulo VARCHAR
+        contenido TEXT
     }
 ```
 > :speech_balloon: **Nota**: En este ejemplo, deberá tener en cuenta que laravel para asociar modelos con tablas, aplica por defecto las reglas de plural y singular en inglés. Por ejemplo, el modelo `Usuario` se relaciona con la tabla `usuarios`, el modelo `Rol` se relaciona con la tabla `rols` (no `roles`), mientras que el modelo `Perfil` se asocia con `perfils` (no `perfiles`). Sin embargo, esto puede personalizarse si es necesario.
@@ -592,7 +599,7 @@ class Usuario extends Model
 }
 ```
 
-**Modelo Post:**
+**Modelo Publicacion:**
 
 ```php
 class Publicacion extends Model
