@@ -72,12 +72,19 @@ En esta práctica, crearemos migraciones y modelos para un sistema de gestión d
 classDiagram
     direction LR
     class Usuario {
+        + apellidos
+        + nombres
+        + email
     }
     class Publicacion {
+        + titulo
+        + contenido
     }
     class Perfil {
+        + informacion
     }
     class Rol {
+        + nombre
     }
     Usuario "1" -- "1" Perfil : tiene
     Usuario "n" -- "n" Rol : cumple
@@ -305,7 +312,7 @@ classDiagram
     direction LR
     Model <|-- Usuario
     class Model {
-
+        + id
     }
     class Usuario {
         + id
