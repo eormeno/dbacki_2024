@@ -89,3 +89,4 @@ teapp> ./start # para Windows
 2. Crear un nuevo rol con los permisos necesarios para gestionar usuarios.
 3. Crear un nuevo usuario con el rol creado en el paso anterior.
 4. Analizar las partes del código que permiten gestionar los roles y permisos.
+5. Analizar las vistas y los componentes de la aplicación.
