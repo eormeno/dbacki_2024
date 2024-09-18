@@ -84,6 +84,23 @@ teapp> ./start # para Windows
 ```
 10. Ingresar a la URL `http://127.0.0.1:8000` y verificar que la aplicación se ha instalado correctamente.
 11. Ingresar con el usuario administrador que fue configurado en el archivo `.env` y verificar que el sistema funciona correctamente.
+12. Remueve .git
+Con el fin de que puedas trabajar en tu propio repositorio, remueve el directorio `.git` del proyecto.
+- Para Linux
+```bash
+teapp> rm -rf .git
+```
+- Para Windows
+```powershell
+teapp> Remove-Item .git -Recurse -Force
+```
+13. Inicia un nuevo repositorio desde Visual Studio Code o desde la terminal.
+```bash
+teapp> git init
+```
+![Iniciar un nuevo repositorio](./gifs/publish_repo.gif)
+
+
 ## Actividades
 1. Crear un nuevo usuario con el rol de administrador.
 2. Crear un nuevo rol con los permisos necesarios para gestionar usuarios.
