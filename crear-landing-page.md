@@ -155,7 +155,16 @@ Las imágenes que se muestran en la vista `landing.blade.php` se deben ubicar en
 <img src="{{ asset('images/image_1.jpeg') }}" alt="Representación del espectro autista"
     class="rounded-lg shadow-lg mb-4">
 ```
-Copie las imágenes de este documento en la carpeta `public/images` de su proyecto Laravel.
+Copia las imágenes de este documento en la carpeta `public/images` de su proyecto Laravel.
+
+También puedes cambiar el logo de la página de login y registro, ubicado en la carpeta `public/images/app-logo.png` por el provisto en este documento.
+
+La imagen `app-logo.png` está definida el componente blade `resources/views/components/authentication-card-logo.blade.php`.
+```php
+<div>
+    <img src="{{ asset('images/app-logo.png') }}" alt="Logo" class="w-32 h-32" />
+</div>
+```
 
 ## Conclusión
 En este documento se ha mostrado cómo crear una landing page con Laravel, blade y Tailwind CSS. Se ha creado una vista `landing` con un diseño más complejo que la vista `welcome` por defecto de Laravel. Se ha incluido la funcionalidad de ingresar a la aplicación y registrarse en la landing page. Además, se ha mostrado cómo acceder a las imágenes desde la vista.
