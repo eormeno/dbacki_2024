@@ -50,7 +50,7 @@ Insertamos el código HTML que queremos que se muestre en la vista. En este caso
             <p class="mb-4">El Trastorno del Espectro Autista (TEA) es una condición caracterizada por presentar
                 variables alteraciones con un impacto de por vida. Estas manifestaciones son muy variables entre
                 individuos y a través del tiempo, acorde al crecimiento y maduración de las personas.</p>
-            <img src="images/image_1.jpeg" alt="Representación del espectro autista"
+            <img src="{{ asset('images/image_1.jpeg') }}" alt="Representación del espectro autista"
                 class="rounded-lg shadow-lg mb-4">
         </section>
 
@@ -65,7 +65,7 @@ Insertamos el código HTML que queremos que se muestre en la vista. En este caso
                 <li>Dificultades con el cambio</li>
                 <li>Habilidades excepcionales en áreas específicas</li>
             </ul>
-            <img src="images/image_2.jpeg" alt="Ilustración de características del autismo"
+            <img src="{{ asset('images/image_2.jpeg') }}" alt="Ilustración de características del autismo"
                 class="rounded-lg shadow-lg mb-4">
         </section>
 
@@ -85,7 +85,7 @@ Insertamos el código HTML que queremos que se muestre en la vista. En este caso
                 <li>Privacidad y seguridad garantizadas</li>
                 <li>Actualizaciones y soporte continuo</li>
             </ul>
-            <img src="images/image_3.jpeg" alt="Captura de pantalla del software"
+            <img src="{{ asset('images/image_3.jpeg') }}" alt="Captura de pantalla del software"
                 class="rounded-lg shadow-lg mb-4">
         </section>
 
@@ -98,7 +98,7 @@ Insertamos el código HTML que queremos que se muestre en la vista. En este caso
                 <li>Contenido adaptable y personalizable</li>
                 <li>Retroalimentación inmediata y seguimiento del progreso</li>
             </ul>
-            <img src="images/image_4.jpeg" alt="Personas utilizando el software"
+            <img src="{{ asset('images/image_4.jpeg') }}" alt="Personas utilizando el software"
                 class="rounded-lg shadow-lg mb-4">
         </section>
 
