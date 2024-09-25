@@ -26,15 +26,17 @@ El diseño de esta vista es algo complejo, y no se adapta al requisito del usuar
 ## Crear la vista landing
 Creamos el documento `landing.blade.php` en la carpeta `resources/views`.
 Insertamos el código HTML que queremos que se muestre en la vista. En este caso, se ha creado una landing page para un software destinado a personas con diagnóstico de autismo.
+> :point_up_2: **Nota**: Utilizamos Tailwind CSS con Vite para el diseño de la landing page. Para ello, consulta la documentación de [Tailwind CSS](https://tailwindcss.com/docs/guides/laravel)
+
 ```html
 <!DOCTYPE html>
-<html lang="es">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Software para Personas con Diagnóstico de Autismo</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>TEApp</title>
+    @vite('resources/css/app.css')
 </head>
 
 <body class="font-sans bg-gray-100">
