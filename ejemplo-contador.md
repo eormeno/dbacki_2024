@@ -1,5 +1,15 @@
 ### Taller: Crear un Contador Simple en Laravel
 
+#### Contenido
+1. [Introducción](#introducción)
+2. [Objetivo del tutorial](#objetivo-del-tutorial)
+3. [Requisitos previos](#requisitos-previos)
+4. [Paso 1: Configuración de las Rutas](#paso-1-configuración-de-las-rutas)
+5. [Paso 2: Creación de la Vista Blade](#paso-2-creación-de-la-vista-blade)
+6. [Paso 3: Probar la Aplicación](#paso-3-probar-la-aplicación)
+7. [Actividades](#actividades)
+8. [Conceptos Clave](#conceptos-clave)
+
 #### Objetivo del tutorial:
 En este tutorial, aprenderás a desarrollar una pequeña aplicación de contador en Laravel que permite incrementar y decrementar un número utilizando rutas y vistas. Nos enfocaremos en conceptos básicos de Laravel como **rutas**, **vistas blade**, y el uso de **componentes** y **enlaces dinámicos**.
 
