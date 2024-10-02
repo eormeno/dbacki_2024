@@ -49,6 +49,13 @@ Este método crea un toast de tipo alerta con una duración extendida de 100,000
 - Cambio de layout: de `x-app-layout` a `x-event-layout`
 - Cambio de slot: de `header` a `title`
 
+```html	
+<x-event-layout>
+    <x-slot name="title">Contador</x-slot>
+    <!-- Contenido de la página -->
+</x-event-layout>
+```
+
 ### Mejoras en layouts/event.blade.php
 Se han añadido nuevos componentes toast:
 1. **Toast de Alerta**
