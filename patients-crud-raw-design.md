@@ -84,12 +84,21 @@ La validación ocurre en varios niveles:
 2. **Backend**:
    - La validación real ocurre en el controlador. Por ejemplo, en el método `store`:
    ```php
-    $validatedData = $request->validate([
-         'codigo' => 'required|unique:patients',
-         'nombre' => 'required',
-         'edad' => 'required|numeric',
-         'genero' => 'required',
-    ]);
+   public function store(Request $request) {
+        $request->validate([
+            'codigo' => 'required|unique:patients',
+            'apellidos' => 'required',
+            'nombres' => 'required',
+            'dni' => 'required|unique:patients',
+            'nacimiento' => 'required|date',
+            'sexo' => 'required',
+            'telefono' => 'required',
+            'email' => 'required|email|unique:patients',
+            'direccion' => 'required',
+        ]);
+        Patient::create($request->all());
+        return redirect()->route('patients.index');
+    }
     ```
    - Los errores se muestran usando `<x-validation-errors class="mb-4" />`.
    - La función `old('campo')` mantiene los valores anteriores en caso de error.
