@@ -4,8 +4,10 @@
 1. [Configuración Inicial](#configuración-inicial)
 2. [Estructura de Ramas](#estructura-de-ramas)
 3. [Flujo de Trabajo](#flujo-de-trabajo)
-4. [Situaciones Comunes y Soluciones](#situaciones-comunes-y-soluciones)
-5. [Buenas Prácticas](#buenas-prácticas)
+4. [Resolución de Pull Requests](#resolución-de-pull-requests)
+5. [Situaciones Comunes y Soluciones](#situaciones-comunes-y-soluciones)
+6. [Buenas Prácticas](#buenas-prácticas)
+7. [Diagrama de Flujo de Trabajo](#diagrama-de-flujo-de-trabajo)
 
 ## Configuración Inicial
 
@@ -219,6 +221,7 @@ php artisan migrate # Si hay nuevas migraciones
 3. Aprobar o solicitar cambios
 
 [El resto de las secciones se mantienen igual...]
+
 ## Situaciones Comunes y Soluciones
 
 ### 1. Conflicto en archivo de vistas Blade
