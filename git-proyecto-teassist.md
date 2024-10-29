@@ -1,4 +1,4 @@
-# Estructura de versiones del proyecto TEApp
+# Estructura de versiones del proyecto TEAssist
 Este documento describe la estructura de versiones del proyecto TEAssist.
 ## Contexto
 El proyecto TEAssist es un proyecto de desarrollo de software que se da en el contexto de la asignatura de Desarrollo Backend I de la carrera Tecnicatura Universitaria en Programación Web de la Universidad Nacional de San Juan. El equipo de desarrollo está compuesto por ocho estudiantes de la carrera mencionada. 
