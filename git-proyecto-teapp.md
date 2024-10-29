@@ -50,11 +50,6 @@ gitGraph
     commit id: "Badías: Modificaciones"
 
     checkout main
-    branch contreras
-    checkout contreras
-    commit id: "Contreras: Modificaciones"
-
-    checkout main
     merge mancini 
     merge pintor
     merge grillo
@@ -62,5 +57,40 @@ gitGraph
     merge marinero
     merge brizuela
     merge badias
-    merge contreras
+```
+
+## Configuración Inicial
+
+### 1. Configuración del Repositorio
+
+```bash
+# Clonar el repositorio
+git clone https://github.com/eormeno/teassist.git
+
+# Configurar usuario y email
+git config user.name "Tu Nombre"
+git config user.email "tu@email.com"
+
+# Crear tu rama de trabajo con tu apellido (en minúsculas, sin espacios ni caracteres especiales)
+git checkout -b apellido main
+git push -u origin develop
+```
+
+### 2. Instalación del Proyecto
+
+```bash
+# Ingresar al directorio del proyecto
+cd teassist/src
+
+# Instalar dependencias
+composer install
+npm install
+
+# Configurar entorno
+cp .env.example .env
+php artisan key:generate
+php artisan storage:link
+
+# Crear base de datos local
+php artisan migrate --seed --force
 ```
