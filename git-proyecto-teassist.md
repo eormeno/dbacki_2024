@@ -1,7 +1,7 @@
 # Estructura de versiones del proyecto TEApp
-Este documento describe la estructura de versiones del proyecto TEAPP.
+Este documento describe la estructura de versiones del proyecto TEAssist.
 ## Contexto
-El proyecto TEAPP es un proyecto de desarrollo de software que se da en el contexto de la asignatura de Desarrollo Backend I de la carrera Tecnicatura Universitaria en Programación Web de la Universidad Nacional de San Juan. El equipo de desarrollo está compuesto por ocho estudiantes de la carrera mencionada. 
+El proyecto TEAssist es un proyecto de desarrollo de software que se da en el contexto de la asignatura de Desarrollo Backend I de la carrera Tecnicatura Universitaria en Programación Web de la Universidad Nacional de San Juan. El equipo de desarrollo está compuesto por ocho estudiantes de la carrera mencionada. 
 ## Objetivo
 El objetivo del proyecto es desarrollar una aplicación web que permita a los estudiantes de la carrera gestionar sus tareas y proyectos de manera eficiente.
 A tal efecto, y dado que se espera que cada estudiante aprenda en forma individual y en equipo, se ha definido una estructura de versiones que permita a cada estudiante trabajar en forma independiente y en equipo al mismo tiempo.
