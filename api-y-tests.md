@@ -240,6 +240,7 @@ La segunda forma es utilizando el script `./test.sh` (Linux) o `./test` (Windows
 ./test.sh
 ```
 El resultado de la ejecución de los tests se verá en la consola.
+
 ![resultado tests](images/image.png)
 
 Para ejecutar un test específico, puedes utilizar el comando `php artisan test --filter` seguido del nombre del test.
