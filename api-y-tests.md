@@ -231,6 +231,10 @@ class TestHelpers
 ### Ejecución de los Tests
 En nuestro contexto, tenemos dos formas de ejecutar los tests. La primera es ejecutar todos los tests de la aplicación con el comando `php artisan test`.
 
+>> **Nota 1:** Asegúrate de que tu aplicación esté en modo testing antes de ejecutar los tests. Puedes cambiar el modo de la aplicación en el archivo `.env` con la variable `APP_ENV=testing`.
+
+>> **Nota 2:** Antes de ejecutar las pruebas, asegúrate de haber ejecutado el build con `npm run build`.
+
 ```bash
 php artisan test
 ```
