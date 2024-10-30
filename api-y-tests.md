@@ -228,6 +228,22 @@ class TestHelpers
 - `rootDefaultPassword`: Devuelve la contraseña por defecto del usuario root.
 - `fakeUsersPassword`: Devuelve una contraseña falsa para los usuarios de prueba.
 
-### Conclusión
+### Ejecución de los Tests
+En nuestro contexto, tenemos dos formas de ejecutar los tests. La primera es ejecutar todos los tests de la aplicación con el comando `php artisan test`.
 
-En este tutorial, aprendiste a crear un controlador y rutas para una API en Laravel. También aprendiste a escribir tests para tus endpoints y a utilizar la clase `TestHelpers` para facilitar la creación de usuarios y roles durante las pruebas. Utiliza estos conceptos y ejemplos para crear tus propias APIs y tests en Laravel.
+```bash
+php artisan test
+```
+La segunda forma es utilizando el script `./test.sh` (Linux) o `./test` (Windows) que se encuentra en la raíz del proyecto.
+
+```bash
+./test.sh
+```
+El resultado de la ejecución de los tests se verá en la consola.
+![resultado tests](images/image.png)
+
+Para ejecutar un test específico, puedes utilizar el comando `php artisan test --filter` seguido del nombre del test.
+
+```bash
+php artisan test --filter 'root user can list activities'
+```
