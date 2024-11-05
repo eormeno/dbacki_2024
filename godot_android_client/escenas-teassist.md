@@ -1,13 +1,10 @@
 # Crear un cliente de Android para TEAssist en Godot
+
 ## Introducción
-En este tutorial mostraré cómo crear la funcionalidad de un cliente de Android para TEAssist en Godot que consta de dos escenas:
+En este tutorial mostraré cómo crear la funcionalidad de un cliente de Android para TEAssist en Godot que consta de tres escenas:
 - Escena principal que dará acceso a las actividades disponibles para el usuario: `MainScene.tscn` y
-- Una ventana de diálogo llamada `CodeInputDialog.tscn` que solicitará un código con un formato específico y lo validará contra un Endpoint HTTP.
-
-El flujo de la aplicación será el siguiente:
-
-1. Verifcar la existencia de un código de usuario almacenado.
-2. Si el código existe, mostrará la escena principal. De lo contrario, si no está almacenado, mostrará la ventana de diálogo que solicite ese código, lo validará contra un Endpoint HTTP y, si es correcto, lo almacenará y mostrará una escena principal.
+- Escena de diálogo llamada `CodeInputDialog.tscn` que solicitará un código con un formato específico y lo validará contra un Endpoint HTTP.
+- Escena inicial que verificará si el código de usuario está almacenado y, si no lo está, mostrará la escena de diálogo para ingresar el código, o si ya está almacenado, mostrará la escena principal.
 
 ## Pasos
 Para lograr esto en Godot, puedes seguir estos pasos:
@@ -27,15 +24,77 @@ Aquí tienes una guía paso a paso:
 4. Guardar la escena con el nombre `MainScene.tscn`.
 ![alt text](godot_ui_scene_save.gif)
 
-#### Paso 2: Crear la escena de diálogo para el ingreso del código
+### Paso 2: Crear la escena para el ingreso del código
 
 1. Crear una nueva escena.
-2. Selecciona un nodo `WindowDialog` como raíz.
-3. Agregar un nodo `LineEdit` para que el usuario ingrese el código.
-4. Agregar un nodo `Button` para que el usuario envíe el código.
-5. Guardar la escena con el nombre `CodeInputDialog.tscn`.
+2. Selecciona un nodo `Control` como raíz.
+3. Agrega un componente `Panel` para el fondo del diálogo.
+4. Dentro del panel, agrega un `VBoxContainer` para alinear verticalmente los elementos.
+5. Dentro del `VBoxContainer`, agrega un `Label` para mostrar instrucciones al usuario.
+6. Agrega un nodo `LineEdit` para que el usuario ingrese el código.
+7. Agrega un nodo `Label` para mostrar un mensaje de error si el código es inválido.
+8. Agrega un nodo `Button` para que el usuario envíe el código.
+9. Guardar la escena con el nombre `CodeInputDialog.tscn`.
 
-### Step 3: Write the Script
+Al finalizar, la escena debería verse algo así:
+
+![alt text](image-10.png)
+
+Y su estructura de nodos sería la siguiente:
+
+```dot
+digraph G {
+rankdir=TB;
+    node [shape=rect, fontsize=8, style=filled, fillcolor=lightgrey, color=black, width=0.5, height=0.3, margin="0.1,0.1"];
+    edge [penwidth=0.5, arrowhead=none,minlen=1];
+
+    Center [label="Center:Control"];
+    Panel [label="Panel:Panel"];
+    VBoxContainer [label="VBoxContainer:VBoxContainer"];
+    Label [label="Label:Label"];
+    LineEdit [label="LineEdit:LineEdit"];
+    ErrorLabel [label="ErrorLabel:Label"];
+    Button [label="Button:Button"];
+
+    Center -> Panel;
+    Panel -> VBoxContainer;
+    VBoxContainer -> Label;
+    VBoxContainer -> LineEdit;
+    VBoxContainer -> ErrorLabel;
+    VBoxContainer -> Button;
+}
+```
+
+#### Descripción de los Componentes
+
+- **Nodo `Center` (Control)**
+Este nodo actúa como un contenedor centralizado para los elementos de la interfaz. Utiliza anclajes para posicionarse en el centro de su contenedor padre.
+
+- **Nodo `Panel` (Panel)**
+El nodo `Panel` es un contenedor visual que se utiliza para agrupar otros elementos de la interfaz. Está configurado para tener un tamaño mínimo y está centrado dentro de su contenedor padre.
+
+- **Nodo `VBoxContainer` (VBoxContainer)**
+El nodo `VBoxContainer` es un contenedor que organiza sus hijos en una columna vertical. Está configurado para crecer horizontal y verticalmente dentro de su contenedor padre.
+
+- **Nodo `Label` (Label)**
+El nodo `Label` muestra un texto en la interfaz. Está configurado para tener un tamaño mínimo y el texto está centrado y en mayúsculas.
+
+- **Nodo `LineEdit` (LineEdit)**
+El nodo `LineEdit` permite la entrada de texto por parte del usuario. Está configurado para ajustarse al diseño de su contenedor padre y tiene un texto de marcador de posición, una longitud máxima de 6 caracteres, y selecciona todo el texto al recibir el foco.
+
+- **Nodo `ErrorLabel` (Label)**
+El nodo `ErrorLabel` muestra mensajes de error en la interfaz. Está configurado para tener un color de fuente rojo y el texto está centrado y en mayúsculas.
+
+- **Nodo `Button` (Button)**
+El nodo `Button` es un botón interactivo que permite al usuario enviar el código ingresado. Está configurado para tener un tamaño mínimo y el texto está centrado y en mayúsculas.
+
+##### Recurso `Dialog.tres` (StyleBoxFlat)
+Este recurso define el estilo visual del panel, incluyendo márgenes, color de fondo, bordes, esquinas redondeadas y sombras. Constiste en un `StyleBoxFlat`que puede ser reutilizado en otros elementos de la interfaz.
+
+### Paso 3: Script de la escena inicial
+Para manejar la lógica de verificación del código almacenado, mostrar el diálogo de entrada si es necesario, validar el código y hacer la transición a la escena principal, crea un nuevo script y adjúntalo a un nodo raíz (por ejemplo, `Node`) en tu escena principal. Guárdalo como `Main.gd`.
+
+```gdscript
 
 Create a new script and attach it to a root node (e.g., `Node`) in your main scene. Save it as `Main.gd`.
 
