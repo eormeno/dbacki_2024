@@ -27,12 +27,13 @@ Aquí tienes una guía paso a paso:
 4. Guardar la escena con el nombre `MainScene.tscn`.
 ![alt text](godot_ui_scene_save.gif)
 
-### Step 2: Create the Code Input Dialog Scene
+#### Paso 2: Crear la escena de diálogo para el ingreso del código
 
-1. Create a new scene and save it as `CodeInputDialog.tscn`.
-2. Add a `WindowDialog` node as the root.
-3. Add a `LineEdit` node for the user to input the code.
-4. Add a `Button` node for the user to submit the code.
+1. Crear una nueva escena.
+2. Selecciona un nodo `WindowDialog` como raíz.
+3. Agregar un nodo `LineEdit` para que el usuario ingrese el código.
+4. Agregar un nodo `Button` para que el usuario envíe el código.
+5. Guardar la escena con el nombre `CodeInputDialog.tscn`.
 
 ### Step 3: Write the Script
 
