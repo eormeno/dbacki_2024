@@ -135,6 +135,36 @@ $ git reset
 $ git checkout .
 ```
 ## Script de Linux ejecutable en Git
+Esto es para asegurarse de que los atributos de ejecución de un archivo ejecutable de linux, queden registrados en el repositorio.
 ```bash
 $ git update-index --chmod=+x ruta/al/script.sh
 ```
+## Comenzar a ignorar carpeta
+Para comenzar a ignorar una carpeta en un repositorio Git que anteriormente no estaba siendo ignorada, puedes seguir estos pasos:
+
+### Paso 1. Remover el seguimiento de la carpeta
+Asegúrate de eliminar el seguimiento de la carpeta: Si la carpeta ya está en el control de versiones, primero debes detener su seguimiento. Haz esto con el comando:
+
+```bash
+git rm -r --cached nombre_de_la_carpeta
+```
+Este comando elimina la carpeta del índice de Git (sin eliminarla físicamente de tu sistema de archivos). Así, ya no se rastrearán los cambios en esta carpeta, pero los archivos aún permanecerán en tu disco.
+
+### Paso 2. Agregar la carpeta al archivo de ignores
+Añade la carpeta al archivo `.gitignore`: Edita el archivo `.gitignore` (en la raíz de tu repositorio o en otro nivel según necesites) y agrega el nombre de la carpeta. Por ejemplo:
+
+```bash
+nombre_de_la_carpeta/
+```
+Esto le indica a Git que ignore cualquier cambio en esa carpeta en el futuro.
+
+### Paso 3. Confirmar
+Confirma los cambios: Realiza un commit para guardar la actualización en el repositorio:
+
+```bash
+git add .gitignore
+git commit -m "Ignorar la carpeta nombre_de_la_carpeta"
+```
+
+### Paso 4. Verificar (opcional)
+Puedes comprobar que la carpeta esté siendo ignorada haciendo un cambio en su contenido y utilizando git status para confirmar que no aparece en la lista de cambios.
