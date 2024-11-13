@@ -34,6 +34,14 @@ $ git push origin master # push current HEAD to master
 $ git branch -d -r localBranchName   # delete branch locally (the -r option should be checked)
 $ git push origin --delete remoteBranchName # deletes the branch remotely
 ```
+### Problemas
+#### Sigue apareciendo la rama remota
+El siguiente comando elimina las referencias a ramas que ya no existen en el servidor remoto.
+
+```bash
+$ git fetch --prune
+```
+
 ## Undelete local branch
 ```bash
 $ git branch -D branch_name
